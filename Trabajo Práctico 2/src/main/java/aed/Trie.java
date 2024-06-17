@@ -1,53 +1,21 @@
-import java.util.ArrayList;
+package aed;
 
-private class Nodo {
-    private ArrayList<Nodo>[] siguientes; 
-    private T significado;
-
-    Nodo() {
-
-        siguientes = new ArrayList<Nodo>[256];
-
-        for (int i = 0; i < 256; i++) {
-            siguientes[i] = null;
-        }
-        significado = null;   
-    }
-
-}
-
-public class Trie {
-    private Nodo raiz;
-
-    public Trie() {
-        raiz = new Nodo();
-    }
-
-
-    public void definir(String clave, T valor) {
-        int len = clave.length();
-        Nodo actual = this.raiz;
-
-        for (int i = 0; i < len; i++) {
-
-            if (actual.siguientes[clave.charAt(i)] != null) {
-                actual = actual.siguientes[clave.charAt(i)];
-
-            } else {
-                Nodo nuevo = new Nodo();
-                actual.siguientes[clave.charAt(i)] = nuevo;
-                actual = nuevo;
-            }
-            
-        }
-        actual.significado = valor;
-    } 
-
-
-
-
-
-
-
-
+public interface Trie<T> {
+    /**
+     * Inserta un valor T en el Trie en la clave pasada como argumento.
+     */
+    void definir(String clave, T valor);
+    
+    /**
+     * Busca y retorna el valor asociado a la clave especificada en el Trie.
+     * Si la clave no se encuentra devuelve null.
+     */
+    T obtener(String clave);
+    
+    /**
+     * Elimina la clave y su valor asociado del Trie.
+     */
+    void eliminar(String clave);
+    
+    
 }
