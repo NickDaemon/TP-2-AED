@@ -58,7 +58,7 @@ public class DiccionarioDigital<T> implements Trie<T> {
             actual.siguientes.set(posicion,nuevo);
             actual = nuevo;
 
-            this._size += 1;
+            
         
         // Si tiene hijo ,me muevo a ese nodo.
         } else {
@@ -66,10 +66,8 @@ public class DiccionarioDigital<T> implements Trie<T> {
         }      
     }
     // Una vez que agregue todos los caracteres actualizo el valor.
-    actual.valor = valor;
-
-    
-        
+    this._size += 1;
+    actual.valor = valor;   
     }
 
     @Override
@@ -88,7 +86,7 @@ public class DiccionarioDigital<T> implements Trie<T> {
             actual = actual.siguientes.get(posicion);
         }
     }
-    // Si la clave estaba devuelvo su valor.
+    // Si la clave estaba devolvera el valor de su significado.
     return actual.valor;
 }
 
@@ -121,28 +119,91 @@ public class DiccionarioDigital<T> implements Trie<T> {
             j += 1;
         }
     }
-    // Si j no es 256 es por que tiene hijos , cambio su valor a null.
+    // Si j no es 256 es por que tiene hijos , cambio el valor del nodo a null y retorno.
     if (j != 256) {
         nodo.valor = null;
+        this._size -= 1;
         return;
-    // Si nodo padre no es null elimino el nodo actual.
+
+    // Si tiene hijos y nodo padre no es null elimino el nodo actual.
     } else if (nodo.padre != null) {
         nodo.padre.siguientes.set(nodo.indice, null);
 
         // Si nodo padre tiene valor ,eliminar termina ahi.
         if (nodo.padre.valor != null) {
+            this._size -= 1;
             return;
 
         // Si no tiene valor salto a padre y recursivamente elimino los necesarios.
         } else {
             eliminarNodo(nodo.padre);
         }
+
     // Si llego aca estoy en raiz puedo retornar ya que abre terminado.
     } else {
+        this._size -= 1;
         return;
     }
     }
+
+    public String[] inOrder() {
+        String[] claves = new String[_size];
+        String palabra = "";
+        Integer index = 0;
+        int actual = 0;
+        
+        coleccionar(claves,palabra,index,actual,this._raiz);
+
+        for (int i = 0; i < claves.length; i++) {
+            System.out.println("La clave es: " + claves[i]);
+        }
+
+     
+        return claves;
+    }
     
+    public void coleccionar(String[] claves, String palabra, Integer index, int actual , NodoTrie<T> nodo){
+    
+    while (actual < 256 && nodo.siguientes.get(actual) == null) {
+          actual += 1;
+    }
+    // Si nodo no tiene hijos y padre es null estoy en raiz sin hijos puedo retornar.
+    if (actual == 256 && nodo.padre == null) {
+        return;
+    
+    // Si nodo no tiene hijos pero su padre no es null retrocedo y vuelvo a empezar.
+    // Pero ahora busco en padre,los hijos mayores a mi posicion.
+    } else if (actual == 256 && nodo.padre != null) {
+        actual = nodo.indice + 1;
+
+        // "Desapilo" mi letra de palabra.
+        if (!palabra.isEmpty()) {
+            palabra = palabra.substring(0, palabra.length() - 1);
+        }
+        coleccionar(claves, palabra, index, actual, nodo.padre);
+
+    // Si nodo tiene hijo y ese hijo no tiene valor , apilo al hijo en palabra
+    // Y me muevo a ese hijo.
+    } else if (actual != 256 && nodo.siguientes.get(actual).valor == null) {
+        int letra = actual;
+        palabra += (char) letra;
+        actual = 0;
+        coleccionar(claves, palabra, index, actual, nodo.siguientes.get(letra));
+
+    // Si nodo tiene hijo y tiene valor lo apilo en palabra lo agrego a string[]
+    // Y vuelvo a empezar
+    } else {
+        int letra = actual;
+        palabra += (char) letra;
+        claves[index] = palabra;
+        index += 1;
+        actual = 0;
+        coleccionar(claves, palabra, index, actual, nodo.siguientes.get(letra));
+
+    }
+
+        
+}
 }
      
 

@@ -5,7 +5,30 @@ public class Materia {
     private int[] docentes;
     private ListaEnlazada<infoIguales> direcciones;
 
-    // Constructor de la clase --> O(1)
+    public class infoIguales {
+        public Trie<Materia> otraCarrera;
+        public String otraClave;
+    
+        // Constructor de la clase --> O(1)
+        public infoIguales(Trie<Materia> direccion, String clave){
+            this.otraCarrera = direccion;
+            this.otraClave = clave;
+        }
+    
+        public Trie<Materia> otraDireccion(){
+            return this.otraCarrera;
+        }
+        public String claveDireccion(){
+            return this.otraClave;
+        }
+    
+        // Invariante de representacion
+        /** 
+            *"otraClave" debe ser una clave valida del Trie "otraCarrera"
+        */
+    }
+
+    // Constructor de clase Materia --> O(1)
     public Materia(){
         this.alumnos = new ListaEnlazada<>();
         this.docentes = new int[4];
@@ -57,6 +80,7 @@ public class Materia {
     // Agregamos otra carrera que tenga la misma materia
     // y su clave correspondiente --> O(1)
     public void guardarDireccion(Trie<Materia> otraCarrera, String clave){
+        
         infoIguales direccion = new infoIguales(otraCarrera, clave);
         this.direcciones.agregarAdelante(direccion);
     }

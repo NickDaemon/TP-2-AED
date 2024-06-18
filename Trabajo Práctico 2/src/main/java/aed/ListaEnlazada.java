@@ -4,7 +4,7 @@ public class ListaEnlazada<T> {
     public Nodo primero;
     public int size;
 
-    private class Nodo {
+    public class Nodo {
         T valor;
         Nodo siguiente;
 
@@ -36,10 +36,6 @@ public class ListaEnlazada<T> {
 
     public Nodo obtenerPrimero() {
         return this.primero;
-    }
-
-    public T obtenerValor(Nodo nodo) {
-        return nodo.valor;
     }
     
 }

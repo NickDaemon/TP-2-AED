@@ -16,6 +16,8 @@ public interface Trie<T> {
      * Elimina la clave y su valor asociado del Trie.
      */
     void eliminar(String clave);
+
+    String[] inOrder();
     
     
 }

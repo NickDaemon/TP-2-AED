@@ -1,5 +1,7 @@
 package aed;
 
+import aed.ListaEnlazada.Nodo;
+import aed.Materia.infoIguales;
 
 public class SistemaSIU {
     private Trie<Trie<Materia>> carreras;
@@ -34,22 +36,16 @@ public class SistemaSIU {
                 // Si todavia no tiene uno ,lo creo.
                 Trie<Materia> subtrieMateria = this.carreras.obtener(infoCarreras[i]);
 
+                
                 if (subtrieMateria == null) {
-                    Trie<Materia> nuevo = new DiccionarioDigital<>();
-                    nuevo.definir(infoMaterias[i], nueva);
-
-                    this.carreras.definir(infoCarreras[i], nuevo);
-
-                // Si esa carrera ya tiene un subtrie iniciado, entonces agrego la clave de esa materia.
-                } else {
-                    subtrieMateria.definir(infoMaterias[i], nueva);
-           
+                    subtrieMateria = new DiccionarioDigital<>();
+                    this.carreras.definir(infoCarreras[i], subtrieMateria);
                 }
-                // Ahora en la materia que comparten las carreras , agrego todos los subtrie que la contienen.
-                // Junto con la clave para rastrearla en esa carrera.
+
+                subtrieMateria.definir(infoMaterias[i], nueva);
                 nueva.guardarDireccion(subtrieMateria, infoMaterias[i]);
-            }    
-        }
+            }
+        } 
         // Una vez que inscribi todas las materias , inicio a los estudiantes.
         for (String alumnos : libretasUniversitarias) {
             this.estudiantes.definir(alumnos, 0);
@@ -96,8 +92,39 @@ public class SistemaSIU {
         return datos.obtenerPlantel();
     }
 
+    @SuppressWarnings("rawtypes")
     public void cerrarMateria(String materia, String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");
+        // Accedo a las materias de esa carrera
+        Trie<Materia> subTrieMateria = this.carreras.obtener(carrera);
+
+        // Accedo a los datos de esa materia
+        Materia datosMateria = subTrieMateria.obtener(materia);
+
+        // Accedo a todas las direcciones en que se encuentra esa materia.
+        ListaEnlazada<infoIguales> direcciones = datosMateria.obtenerIguales();
+
+        // Comienzo en la primer direccion y con un ciclo voy cerrando las materias en todas las carreras.
+        Nodo actual = direcciones.obtenerPrimero();
+
+        while (actual != null) {
+            infoIguales info = (infoIguales) actual.valor;
+            info.otraCarrera.eliminar(info.otraClave);
+            actual = actual.siguiente;
+        }
+
+        // Idem al paso anterior pero ahora itero con los alumnos de la materia.
+        ListaEnlazada<String> alumnes = datosMateria.obtenerAlumnos();
+        Nodo alumno = alumnes.obtenerPrimero();
+
+        while (alumno != null) {
+            // Disminuyo la cantidad de materias de cada alumno en esa materia.
+            String LU = (String) alumno.valor;
+            Integer inscripciones = this.estudiantes.obtener(LU);
+            inscripciones -= 1;
+            this.estudiantes.definir(LU, inscripciones);
+
+            alumno = alumno.siguiente;
+        }
     }
 
     public int inscriptos(String materia, String carrera){
@@ -125,16 +152,15 @@ public class SistemaSIU {
         }
         return cupo < datosMateria.obtenerAlumnos().obtenerSize();
     }
-            
-        
-    
+
 
     public String[] carreras(){
-        throw new UnsupportedOperationException("Método no implementado aún");
+        return this.carreras.inOrder();
     }
 
     public String[] materias(String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");
+        Trie<Materia> subTrieMaterias = this.carreras.obtener(carrera);
+        return subTrieMaterias.inOrder();
     }
 
     public int materiasInscriptas(String estudiante){
