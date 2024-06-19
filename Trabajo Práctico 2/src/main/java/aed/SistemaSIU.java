@@ -1,11 +1,21 @@
 package aed;
 
 import aed.ListaEnlazada.Nodo;
-import aed.Materia.infoIguales;
+
 
 public class SistemaSIU {
     private Trie<Trie<Materia>> carreras;
     private Trie<Integer> estudiantes;
+
+    // Invariante de representacion
+/**
+    * 'carreras' no es null.
+    * 'estudiantes' no es null.
+    * Los valores de estudiantes se mueven entre 0 y la cantidad de materias.
+    * Todos los elementos en carreras.obtenerAlumnos() estan en 'estudiantes' y viceversa.
+    * 'estudiantes' no tiene repetidos.
+    * 
+*/
 
     enum CargoDocente{
         AY2,
@@ -14,60 +24,105 @@ public class SistemaSIU {
         PROF
     }
     
+    // Ejercicio 1:
 
     public SistemaSIU(InfoMateria[] materiasEnCarreras, String[] libretasUniversitarias){
-        this.carreras = new DiccionarioDigital<>();
-        this.estudiantes = new DiccionarioDigital<>();
-
+        this.carreras = new Trie<>();
+        this.estudiantes = new Trie<>();
+        
+        // Cada posicion del arreglo 'materiasEnCarreras' corresponde a una materia.
         for (InfoMateria info : materiasEnCarreras) {
 
-            // Obtengo la lista de carreras que voy a ir creando o modificando en cada iteracion.
-            // Y obtengo el nombre de la materia que voy agregar a esa carrera.
+            // Obtengo la lista de carreras que tienen esa misma materia.
+            // Y obtengo la lista de nombres de esa materia. --> O(1).
             String[] infoCarreras = info.carreras;
             String[] infoMaterias = info.nombresEnCarreras;
 
-            // "nueva" va a ser la misma instancia de materia en todas las carreras que la tengan como materia.
-            // Cada trie guardara una referencia distinta de como llegar a ella.
+            // Creo una instancia de Materia que van a compartir todas las carreras
+            // que la tengan como materia. --> O(1).
             Materia nueva = new Materia();
 
             for (int i = 0; i < infoCarreras.length; i++) {
 
-                // Accedo al subtrie "Materia" correspondiente de cada carrera.
-                // Si todavia no tiene uno ,lo creo.
+                // Accedo al subtrie de cada carrera que contiene sus materias. --> O(|c|).
                 Trie<Materia> subtrieMateria = this.carreras.obtener(infoCarreras[i]);
 
-                
+                // Sino tiene uno lo creo. --> O(1).
+                // Y lo defino --> O(|c|)
                 if (subtrieMateria == null) {
-                    subtrieMateria = new DiccionarioDigital<>();
+                    subtrieMateria = new Trie<>();
                     this.carreras.definir(infoCarreras[i], subtrieMateria);
                 }
-
+                // Una vez que obtenemos el subtrie , agrego la materia. --> O(|n|).
+                // Y guardo en el 'mapa' de la materia como encontrarla con cada carrera. --> O(1).
                 subtrieMateria.definir(infoMaterias[i], nueva);
                 nueva.guardarDireccion(subtrieMateria, infoMaterias[i]);
             }
         } 
-        // Una vez que inscribi todas las materias , inicio a los estudiantes.
+        // Una vez que inscribi todas las materias , inicio a los estudiantes. --> O(E).
         for (String alumnos : libretasUniversitarias) {
             this.estudiantes.definir(alumnos, 0);
         }
     }
 
+// Complejidad Ejercicio 1.
+/** 
+    * Obtener el subTrie de una carrera y definirlo tiene complejidad O(|c|) + O(|c|) = O(|c|).
+    * Esto lo hacemos tantas veces como materias tenga esa carrera en su conjunto de materias.
+    * Si Mc es el conjunto de materias que tiene cada carrera entonces ese paso lo hacemos 
+      |Mc| veces.
+    * Y esto lo hacemos con cada carrera que hay en el conjunto total de carreras C.
+    * En total ese paso al finalizar el metodo tiene complejidad: O(Σ_(c ∈ C) |c|*|Mc|).
+
+    * Definir una instancia de Materia en cada subtrie cuesta O(|n|).
+    * Como las materias tienen distintos nombres , ese paso lo tengo que hacer tantas veces 
+      como nombres tenga.
+    * Y como los nombres aveces difieren ese paso va a costar en cada iteracion :
+    * O(|n_1|) + O(|n_2|) + ... + O(|n_n|). Si Nm es el conjunto de nombres de cada materia la 
+      complejidad queda: O(Σ_(n ∈ Nm) |n|. 
+    * Y esto lo voy hacer con cada materia que hay en el conjunto total de materias M.
+    * Por lo tanto en total la complejidad de ese paso queda : O(Σ_(m ∈ M) Σ_(n ∈ Nm) |n|.
+    
+    * Por ultimo como las claves de los estudiantes estan acotadas ,agregarlas a un Trie tiene 
+      costo O(1).
+    * Por lo tanto ese paso cuesta O(E).'E' siendo la cantidad de estudiantes en total.
+
+    * Al finalizar el metodo la complejidad queda:
+    * O(Σ_(c ∈ C) |c|*|Mc| + Σ_(m ∈ M) Σ_(n ∈ Nm) |n| + E).
+ */
+
+
+    // Ejercicio 2:
+
     public void inscribir(String estudiante, String carrera, String materia){
-        // Accedo a las materias de "carrera".
+        // Accedo a las materias de "carrera". --> O(|c|)
         Trie<Materia> subMateria = this.carreras.obtener(carrera);
 
-        // Accedo a la materia que voy a modificar y agrego ese alumno.
+        // Accedo a la materia que voy a modificar y agrego ese alumno. --> O(|m|)
         Materia datos = subMateria.obtener(materia);
         datos.inscribirAlumno(estudiante);
         
 
-        // Aumento la cantidad de materias que esta inscripto ese estudiante.
+        // Aumento la cantidad de materias que esta inscripto ese estudiante. --> O(1).
         int cantidad = this.estudiantes.obtener(estudiante);
         cantidad += 1;
         this.estudiantes.definir(estudiante, cantidad);
 
     }
 
+// Complejidad Ejercicio 2:
+/**
+    * Accedo a la carrera de ese alumno en tiempo O(|c|).
+    * Despues accedo a la materia que lo quiero inscribir en tiempo O(|m|).
+    * Lo agrego a esa materia en tiempo O(1)
+    * Como los nombres de estudiantes estan acotados , accedo a su trie materias en O(1).
+    * Aumento la cantidad de materias en la que esta en O(1).
+    * En total la complejidad queda O(|c| + |m| + 1 + 1) = O(|c| + |m|). 
+*/
+
+
+    // Ejercicio 3:
+    
     public void agregarDocente(CargoDocente cargo, String carrera, String materia){
         Trie<Materia> subMateria = this.carreras.obtener(carrera);
         Materia datos = subMateria.obtener(materia);

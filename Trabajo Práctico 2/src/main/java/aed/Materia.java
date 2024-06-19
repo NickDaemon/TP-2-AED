@@ -5,49 +5,25 @@ public class Materia {
     private int[] docentes;
     private ListaEnlazada<infoIguales> direcciones;
 
-    public class infoIguales {
-        public Trie<Materia> otraCarrera;
-        public String otraClave;
-    
-        // Constructor de la clase --> O(1)
-        public infoIguales(Trie<Materia> direccion, String clave){
-            this.otraCarrera = direccion;
-            this.otraClave = clave;
-        }
-    
-        public Trie<Materia> otraDireccion(){
-            return this.otraCarrera;
-        }
-        public String claveDireccion(){
-            return this.otraClave;
-        }
-    
-        // Invariante de representacion
-        /** 
-            *"otraClave" debe ser una clave valida del Trie "otraCarrera"
-        */
-    }
-
     // Constructor de clase Materia --> O(1)
     public Materia(){
         this.alumnos = new ListaEnlazada<>();
         this.docentes = new int[4];
         this.direcciones = new ListaEnlazada<>();
-
     }
     
-    // Devuelve la lista de alumnos de la materia --> O(1)
+    // Devuelve la lista de alumnos de la materia. --> O(1)
     public ListaEnlazada<String> obtenerAlumnos(){
         return this.alumnos;
     }
     
-    // Devuelve los docentes --> O(1)
+    // Devuelve al plantel docente. --> O(1)
     public int[] obtenerPlantel(){
         return this.docentes;
     }
 
-    // Devuelve la lista de carreras que tienen la misma materia
-    // Junto con la clave para encontrarla --> O(1)
+    // Devuelve el mapa de todas las carreras que contienen a Materia
+    // Junto con su respectiva clave para encontrarla. --> O(1)
     public ListaEnlazada<infoIguales> obtenerIguales(){
         return this.direcciones;
     }
@@ -65,16 +41,15 @@ public class Materia {
         } else if (cargo.equals("JTP")) {
             this.docentes[1] += 1;
 
-        }else if (cargo.equals("AY1")) {
+        } else if (cargo.equals("AY1")) {
             this.docentes[2] += 1;
 
         } else if (cargo.equals("AY2")) {
             this.docentes[3] += 1;
 
         } else {
-            System.out.println("No corresponde a un cargo docente");
-        }
-            
+            System.out.println("No corresponde a un cargo docente.");
+        }      
         }
 
     // Agregamos otra carrera que tenga la misma materia
@@ -83,22 +58,22 @@ public class Materia {
         
         infoIguales direccion = new infoIguales(otraCarrera, clave);
         this.direcciones.agregarAdelante(direccion);
-    }
-           
-        
+    }           
     }
 
 // Invariante de Representacion:
 /**
-     * Las longitudes de los elementos en "alumnos" son todas iguales.
-     * No hay repetidos en "alumnos".
-     * No hay repetidos en "mismasMaterias".
+     * 'alumnos' es siempre distinto de null.
+     * No hay repetidos en 'alumnos'.
+     * 'docentes' no es null y siempre tiene 4 elementos.
+     * Los valores de 'docentes' son siempre mayores o iguales a 0.
+     * 'direcciones' nunca es null.
      */
 
 // Complejidades:
 /** 
-    * Como en esta clase solo agregamos elementos a una lista enlazada -
-    * O devolvemos la lista enlazada , todos los metodos tienen complejidad O(1).
-    * Solo modificamos la posicion de un array que tambien es O(1).
+    * Como en esta clase solo agregamos elementos a una lista enlazada 
+    * O devolvemos la lista enlazada (o arreglo) , todos los metodos 
+    * tienen complejidad O(1).
 */
 
