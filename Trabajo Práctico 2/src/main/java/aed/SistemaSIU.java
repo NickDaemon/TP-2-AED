@@ -2,18 +2,28 @@ package aed;
 
 import aed.ListaEnlazada.Nodo;
 
-
 public class SistemaSIU {
     private Trie<Trie<Materia>> carreras;
     private Trie<Integer> estudiantes;
 
-    // Invariante de representacion
-/**
-    * 'carreras' no es null.
-    * 'estudiantes' no es null.
-    * Los valores de estudiantes se mueven entre 0 y la cantidad de materias.
-    * Todos los elementos en carreras.obtenerAlumnos() estan en 'estudiantes' y viceversa.
-    * 'estudiantes' no tiene repetidos.
+    
+/** Invariante de Representacion:
+ 
+    * 'carreras' debe ser una instancia de Trie valida.
+    * Cada clave de 'carreras' debe tener asociado como valor una instancia valida de Trie.
+    * Cada valor del subtrie de cada carrera debe ser una instancia valida de Materia.
+    * El subtrie de carreras con mayor cantidad de claves definidas indica la cantidad
+    * maxima de materias. 
+    * Todos los valores asociados a las claves de 'estudiantes' deben ser mas grandes o iguales
+    * que 0 y no mas grandes que la cantidad maxima de materias.
+    * Las claves de 'estudiantes' tienen la misma longitud.
+    * Para todo 'm' instancia de materia asociada a los valores de las claves de cada subtrie de 
+    * 'carreras':
+    * |m.alumnos| no puede superar la cantidad de claves de 'estudiantes'.
+    * Todo elemento de m.alumnos debe ser una clave valida de 'estudiantes'.
+    * 0 <= |m.iguales| < cantidad de claves definidas en 'carreras'.
+    * Todo subtrie 'materia' asociado a algun elemento de m.iguales debe ser un subtrie valido 
+    * de 'carreras'.
     * 
 */
 
@@ -27,8 +37,8 @@ public class SistemaSIU {
     // Ejercicio 1:
 
     public SistemaSIU(InfoMateria[] materiasEnCarreras, String[] libretasUniversitarias){
-        this.carreras = new Trie<>();
-        this.estudiantes = new Trie<>();
+        this.carreras = new DiccionarioDigital<>();
+        this.estudiantes = new DiccionarioDigital<>();
         
         // Cada posicion del arreglo 'materiasEnCarreras' corresponde a una materia.
         for (InfoMateria info : materiasEnCarreras) {
@@ -50,7 +60,7 @@ public class SistemaSIU {
                 // Sino tiene uno lo creo. --> O(1).
                 // Y lo defino --> O(|c|)
                 if (subtrieMateria == null) {
-                    subtrieMateria = new Trie<>();
+                    subtrieMateria = new DiccionarioDigital<>();
                     this.carreras.definir(infoCarreras[i], subtrieMateria);
                 }
                 // Una vez que obtenemos el subtrie , agrego la materia. --> O(|n|).
@@ -140,6 +150,14 @@ public class SistemaSIU {
             datos.inscribirDocente("PROF");
         }
     } 
+// Complejidad Ejercicio 3:
+/**
+    accedo a un Trie que contiene las materias de una carrera específica O(|c|)
+    accedo a la materia dentro del Trie de materias de la carrera O(|m|)
+    elijo el maximo de las condiciones del if, max{O(|1|),O(|1|),O(|1|),O(|1|)} = O(|1|)
+    en total la complejidad quda: O(∣c∣+∣m∣)
+*/
+
 
     public int[] plantelDocente(String materia, String carrera){
         Trie<Materia> subMateria = this.carreras.obtener(carrera);
@@ -148,7 +166,7 @@ public class SistemaSIU {
     }
 
     @SuppressWarnings("rawtypes")
-    public void cerrarMateria(String materia, String carrera){
+    public void cerrarMateria(String materia,   String carrera){
         // Accedo a las materias de esa carrera
         Trie<Materia> subTrieMateria = this.carreras.obtener(carrera);
 
@@ -210,16 +228,15 @@ public class SistemaSIU {
 
 
     public String[] carreras(){
-        return this.carreras.inOrder();
+        return this.carreras.clavesinOrder();
     }
 
     public String[] materias(String carrera){
         Trie<Materia> subTrieMaterias = this.carreras.obtener(carrera);
-        return subTrieMaterias.inOrder();
+        return subTrieMaterias.clavesinOrder();
     }
 
     public int materiasInscriptas(String estudiante){
         return this.estudiantes.obtener(estudiante);
     }
 }
-

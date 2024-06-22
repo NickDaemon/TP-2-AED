@@ -5,6 +5,17 @@ public class Materia {
     private int[] docentes;
     private ListaEnlazada<infoIguales> direcciones;
 
+    
+/** Invariante de Representacion:
+ 
+     * 'alumnos' es siempre distinto de null.
+     * No hay repetidos en 'alumnos'.
+     * 'docentes' no es null y siempre tiene 4 elementos.
+     * Los valores de 'docentes' son siempre mayores o iguales a 0.
+     * 'direcciones' nunca es null.
+     
+*/
+
     // Constructor de clase Materia --> O(1)
     public Materia(){
         this.alumnos = new ListaEnlazada<>();
@@ -61,14 +72,7 @@ public class Materia {
     }           
     }
 
-// Invariante de Representacion:
-/**
-     * 'alumnos' es siempre distinto de null.
-     * No hay repetidos en 'alumnos'.
-     * 'docentes' no es null y siempre tiene 4 elementos.
-     * Los valores de 'docentes' son siempre mayores o iguales a 0.
-     * 'direcciones' nunca es null.
-     */
+
 
 // Complejidades:
 /** 

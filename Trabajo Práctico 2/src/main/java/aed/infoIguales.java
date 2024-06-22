@@ -4,6 +4,13 @@ public class infoIguales {
     Trie<Materia> otraCarrera;
     String otraClave;
 
+    // Invariante de representacion
+    /** 
+        * 'otraCarrera' no debe ser null.
+        * 'otraClave' no debe ser null.
+        * 'otraClave' debe ser una clave valida del Trie 'otraCarrera'.
+    */
+
     // Constructor de la clase --> O(1)
     public infoIguales(Trie<Materia> direccion, String clave){
         this.otraCarrera = direccion;
@@ -20,10 +27,5 @@ public class infoIguales {
         return this.otraClave;
     }
 
-    // Invariante de representacion
-    /** 
-        * 'otraCarrera' no debe ser null.
-        * 'otraClave' no debe ser null.
-        * 'otraClave' debe ser una clave valida del Trie 'otraCarrera'.
-    */
+    
 }
