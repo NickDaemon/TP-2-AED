@@ -1,8 +1,8 @@
 package aed;
 
 public class ListaEnlazada<T> {
-    private Nodo primero;
-    private int size;
+    private Nodo _primero;
+    private int _size;
 
     public class Nodo {
         T valor;
@@ -13,46 +13,52 @@ public class ListaEnlazada<T> {
             this.siguiente = null;
         }
     }
+
+    // Invariante de representacion
+    /** 
+       * _size es siempre mayor o igual a 0.
+       
+       * _size es 0 si y solo si _primero es null.
+
+       * _size es igual a la cantidad de elementos siguientes != null, comenzando con 
+         _primero. 
+         
+       * No hay ciclos.Si comienzo con _primero , y recorro siguientes llegare al nodo null.
+    */
     
     // Constructor de la clase --> O(1).
     public ListaEnlazada() {
-        this.primero = null;
-        this.size = 0;
+        this._primero = null;
+        this._size = 0;
     }
     
 
     // Agrego un elemento --> O(1).
     public void agregarAdelante(T elemento) {
         Nodo nuevo = new Nodo(elemento);
-        if (primero == null) {
-            primero = nuevo;
+        if (this._primero == null) {
+            this._primero = nuevo;
         } else {
-            nuevo.siguiente = primero;
-            primero = nuevo;
+            nuevo.siguiente = this._primero;
+            this._primero = nuevo;
         }
-        this.size++;
+        this._size++;
     }
     
 
     // Devuelve la longitud de la lista --> O(1).
     public int obtenerSize() {
-        return this.size;
+        return this._size;
     }
     
 
     // Devuelve el primer elemento de la lista --> O(1).
     public Nodo obtenerPrimero() {
-        return this.primero;
+        return this._primero;
     } 
 } 
 
-// Invariante de representacion
-    /** 
-       * size es siempre mayor o igual a 0.
-       * Si size es 0 primero es null.
-       * Si size es > 0 , primero es distinto de null.
-       * size es igual a la cantidad de elementos de la lista, comenzando con primero.   
-    */
+
 
 
    

@@ -17,12 +17,12 @@ public class infoIguales {
         this.otraClave = clave;
     }
     
-    // Acceso al trie 'otraCarrera' --> O(1).
+    // Accedo al trie 'otraCarrera' --> O(1).
     public Trie<Materia> otraDireccion(){
         return this.otraCarrera;
     }
 
-    // Acceso a la clave que buscar en el trie 'otraCarrera' --> O(1).
+    // Accedo a la clave que voy a buscar en el trie 'otraCarrera' --> O(1).
     public String claveDireccion(){
         return this.otraClave;
     }

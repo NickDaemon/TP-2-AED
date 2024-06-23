@@ -45,7 +45,6 @@ public class DiccionarioDigital<T> implements Trie<T> {
      *   _raiz.indice es siempre -1.
      *   Para todos los nodos distintos de _raiz, indice se mueve en el rango: 0 <= indice < 256.
      *   Para todo NodoTrie n y m , si n.padre = m, entonces m.siguientes[n.indice] = n.
-     * 
      */
 
 
